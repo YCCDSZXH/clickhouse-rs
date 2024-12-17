@@ -253,7 +253,7 @@ where
     }
 
     /// Takes the current `INSERT` and resets the inserter.
-    pub async fn take_insert(&mut self) -> Option<Insert<T>> {
+    pub fn take_insert(&mut self) -> Option<Insert<T>> {
         if !self.limits_reached() {
             self.in_transaction = false;
             return None;
