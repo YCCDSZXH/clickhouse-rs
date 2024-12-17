@@ -252,6 +252,19 @@ where
         self.force_commit().await
     }
 
+    /// Takes the current `INSERT` and resets the inserter.
+    pub fn take_insert(&mut self) -> Option<Insert<T>> {
+        if !self.limits_reached() {
+            self.in_transaction = false;
+            return None;
+        }
+
+        self.in_transaction = false;
+        self.pending = Quantities::ZERO;
+        self.ticks.reschedule();
+        self.insert.take()
+    }
+
     /// Ends the current `INSERT` unconditionally.
     pub async fn force_commit(&mut self) -> Result<Quantities> {
         self.in_transaction = false;
